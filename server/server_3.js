@@ -1,7 +1,10 @@
+const express = require('express');
+const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const { ApolloServer, gql } = require('apollo-server');
+const cors = require('cors');
+const { ApolloServer, gql } = require('apollo-server-express');
 
 dotenv.config();
 
@@ -25,6 +28,8 @@ mongoose.connect(
   },
 );
 
+app.use(cors());
+app.use(bodyParser.json());
 const User = require('./models/user');
 
 const typeDefs = gql`
@@ -84,7 +89,8 @@ const server = new ApolloServer({
   resolvers,
 });
 
+server.applyMiddleware({ app });
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Running at port ${PORT}`);
 });
